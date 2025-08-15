@@ -1,3 +1,5 @@
+import Exceptions.livro.LivroNaoEncontradoException;
+import Exceptions.usuario.UsuarioNaoEncontradoException;
 import status.StatusLivro;
 
 import java.util.List;
@@ -27,6 +29,16 @@ public class Biblioteca {
         usuario.getEmprestatos().add(livro);
         livro.setStatus(StatusLivro.INDISPONIVEL);
         System.out.println("Livro '" + livro.getTitulo() + "' emprestado para " + usuario.getNome());
+    }
 
+    private Usuario buscarUsuarioPorId(String id)
+            throws UsuarioNaoEncontradoException {
+        return usuarios.stream().filter(usuario -> usuario.getId().equalsIgnoreCase(id)).findFirst()
+                .orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado."));
+    }
+
+    private Livro buscarLivroPorId(String id) throws LivroNaoEncontradoException {
+        return livros.stream().filter(l -> l.getId().equalsIgnoreCase(id)).findFirst()
+                .orElseThrow(() -> new LivroNaoEncontradoException("Livro não encontrado."));
     }
 }
