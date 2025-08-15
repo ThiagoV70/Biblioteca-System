@@ -45,4 +45,9 @@ public class Livro {
     public void setStatus(StatusLivro status) {
         this.status = status;
     }
+
+    @Override
+    public String toString() {
+        return "[" + id + "] " + titulo + " - " + autor + " (" + status + ")";
+    }
 }

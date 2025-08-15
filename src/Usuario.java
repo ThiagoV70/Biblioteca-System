@@ -37,4 +37,9 @@ public class Usuario {
     public List<Livro> getEmprestatos() {
         return emprestados;
     }
+
+    @Override
+    public String toString() {
+        return "[" + id + "] " + nome + " - " + email;
+    }
 }
