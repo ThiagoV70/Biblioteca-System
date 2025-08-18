@@ -38,7 +38,7 @@ public class Usuario {
         this.nome = nome;
     }
 
-    public List<Livro> getEmprestatos() {
+    public List<Livro> getEmprestados() {
         return emprestados;
     }
 

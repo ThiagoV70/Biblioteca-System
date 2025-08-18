@@ -1,34 +1,53 @@
+import Exceptions.livro.LivroIndisponivelException;
+import Exceptions.livro.LivroNaoEmprestadoParaUsuarioException;
 import Exceptions.livro.LivroNaoEncontradoException;
 import Exceptions.usuario.UsuarioNaoEncontradoException;
 import status.StatusLivro;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Biblioteca {
 
-    private List<Usuario> usuarios;
-    private List<Livro> livros;
+    private List<Usuario> usuarios = new ArrayList<>();
+    private List<Livro> livros = new ArrayList<>();
 
-    public void AddUsuario (Usuario usuario) {
+    public void addUsuario (Usuario usuario) {
         usuarios.add(usuario);
     }
 
-    public void AddLivro (Livro livro) {
+    public void addLivro(Livro livro) {
         livros.add(livro);
     }
 
-    public void EMPlivro (Livro livro,Usuario usuario) {
-        while (livro.getStatus() != StatusLivro.DISPONIVEL) {
-            System.out.println("Esse livro não está disponível, escolha outro.");
-            for (Livro l : livros) {
-                if (l.getStatus() == StatusLivro.DISPONIVEL) {
-                    System.out.println("- " + l.getTitulo() + " (" + l.getAutor() + ")");
-                }
-            }
+    public void emprestarLivro(String livroId, String usuarioId)
+            throws UsuarioNaoEncontradoException, LivroNaoEncontradoException, LivroIndisponivelException {
+
+        Usuario usuario = buscarUsuarioPorId(usuarioId);
+        Livro livro = buscarLivroPorId(livroId);
+
+        if (livro.getStatus() != StatusLivro.DISPONIVEL) {
+            throw new LivroIndisponivelException("O livro '" + livro.getTitulo() + "' não está disponível.");
         }
-        usuario.getEmprestatos().add(livro);
+
         livro.setStatus(StatusLivro.INDISPONIVEL);
-        System.out.println("Livro '" + livro.getTitulo() + "' emprestado para " + usuario.getNome());
+        usuario.getEmprestados().add(livro);
+        System.out.println("Livro emprestado com sucesso para " + usuario.getNome());
+    }
+
+    public void devolverLivro(String livroId, String usuarioId)
+            throws UsuarioNaoEncontradoException, LivroNaoEncontradoException, LivroNaoEmprestadoParaUsuarioException {
+
+        Usuario usuario = buscarUsuarioPorId(usuarioId);
+        Livro livro = buscarLivroPorId(livroId);
+
+        if (!usuario.getEmprestados().contains(livro)) {
+            throw new LivroNaoEmprestadoParaUsuarioException("O usuário não possui este livro emprestado.");
+        }
+
+        usuario.getEmprestados().remove(livro);
+        livro.setStatus(StatusLivro.DISPONIVEL);
+        System.out.println("Livro devolvido com sucesso por " + usuario.getNome());
     }
 
     private Usuario buscarUsuarioPorId(String id)
